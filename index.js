@@ -9,7 +9,8 @@ wss.on('connection', (ws) => {
 
     ws.on('message', (message) => {
         const jsonString = message.toString();
-        console.log('Received message:',jsonString);
+        console.log('Received message:', jsonString);
+
         if (jsonString === 'getMessages') {
             const allMessages = [...messages];
             messages.length = 0; 
@@ -17,10 +18,11 @@ wss.on('connection', (ws) => {
         } else {
             try {
                 const data = JSON.parse(jsonString);
-                if (data.message && data.value !== undefined) {
-                    const newMessage = { message: data.message, value: data.value };
-                    messages.push(newMessage); 
+                if (data.sensor_name && data.value !== undefined) {
+                    const newMessage = { message: data.sensor_name, value: data.value };
+                    messages.push(newMessage);
 
+                    console.log('Sending message to all clients:', newMessage);
                     wss.clients.forEach((client) => {
                         if (client.readyState === WebSocket.OPEN) {
                             client.send(JSON.stringify(newMessage));
@@ -31,6 +33,10 @@ wss.on('connection', (ws) => {
                 console.error('Invalid message format:', error);
             }
         }
+    });
+
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
     });
 });
 
