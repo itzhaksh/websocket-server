@@ -8,14 +8,15 @@ wss.on('connection', (ws) => {
     console.log('Client connected via WebSocket');
 
     ws.on('message', (message) => {
-        console.log('Received message:', message);
-        if (message === 'getMessages') {
+        const jsonString = message.toString();
+        console.log('Received message:',jsonString);
+        if (jsonString === 'getMessages') {
             const allMessages = [...messages];
             messages.length = 0; 
             ws.send(JSON.stringify(allMessages)); 
         } else {
             try {
-                const data = JSON.parse(message);
+                const data = JSON.parse(jsonString);
                 if (data.message && data.value !== undefined) {
                     const newMessage = { message: data.message, value: data.value };
                     messages.push(newMessage); 
