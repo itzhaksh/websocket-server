@@ -8,6 +8,7 @@ wss.on('connection', (ws) => {
     console.log('Client connected via WebSocket');
 
     ws.on('message', (message) => {
+         console.log('Received message:', message);
         if (message === 'getMessages') {
             const allMessages = [...messages];
             messages.length = 0;
